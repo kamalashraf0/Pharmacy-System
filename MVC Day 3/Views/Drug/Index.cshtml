@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Drug>
+
+@{
+    ViewBag.Title = "Drugs List";
+}
+
+
+<div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">Add Drug</a>
+</div>
+<br />
+<div class="container mt-5">
+    <h2 class="mb-4">@ViewBag.title</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">ImagePath</th>
+                <th scope="col">Actions</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var drug in Model)
+            {
+                <tr>
+                    <th scope="row">@drug.ID</th>
+                    <td>@drug.Name</td>
+                    <td>@drug.Price</td>
+                    <td><img src="@Url.Content(@drug.ImagePath)" alt="@drug.Name" width="200" /></td>
+                    <td>
+                        <a class="btn btn-outline-primary" href=@Url.Action("Edit" , new {id = drug.ID})>Edit</a>
+                        <a class="btn btn-danger" href=@Url.Action("Delete" , new {id = drug.ID})>Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+@* @model List<Drug>
+
+@{
+    ViewBag.Title = "Drug List";
+}
+
+<div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">Add Drug</a>
+</div>
+<br />
+<div class="container mt-5">
+    <h2 class="mb-4">@ViewBag.title</h2>
+    @Html.DisplayTable(Model)
+</div>
+ *@
