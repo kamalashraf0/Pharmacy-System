@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
+using MVC_Day_3.Helpers;
 using MVC_Day_3.Models;
 
 namespace MVC_Day_3.Controllers
@@ -8,13 +10,13 @@ namespace MVC_Day_3.Controllers
     public class DrugController : Controller
     {
 
-
-
         ApplicationDBContext _context;
+        ImageHelper _imageHelper;
 
-        public DrugController(ApplicationDBContext context)
+        public DrugController(ApplicationDBContext context, ImageHelper imageHelper)
         {
             _context = context;
+            _imageHelper = imageHelper;
         }
         public IActionResult Index()
         {
@@ -30,10 +32,14 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Drug drug)
+        public IActionResult Create(Drug drug, IFormFile ImagePath)
         {
             if (ModelState.IsValid)
             {
+                if (ImagePath != null)
+                {
+                    drug.ImagePath = _imageHelper.SaveImage(ImagePath);
+                }
                 _context.Drugs.Add(drug);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -60,10 +66,12 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Drug drug)
+        public IActionResult Edit(Drug drug, IFormFile ImagePath)
         {
             if (ModelState.IsValid)
             {
+                var existingDrug = _context.Drugs.AsNoTracking().FirstOrDefault(d => d.Id == drug.Id);
+                drug.ImagePath = _imageHelper.UpdateImage(ImagePath, existingDrug.ImagePath);
                 _context.Drugs.Update(drug);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -109,6 +117,7 @@ namespace MVC_Day_3.Controllers
                 NotFound();
             }
 
+            _imageHelper.DeleteImage(drug.ImagePath);
             _context.Drugs.Remove(drug);
             _context.SaveChanges();
 
