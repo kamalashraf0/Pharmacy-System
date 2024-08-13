@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MVC_Day_3.Models;
+using MVC_Day_3.Data;
 
 namespace MVC_Day_3
 {
@@ -12,9 +12,11 @@ namespace MVC_Day_3
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-            builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(
+            builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseLazyLoadingProxies().UseSqlServer(
                builder.Configuration.GetConnectionString("DefaultConnection")
                ));
+
+
 
             var app = builder.Build();
 

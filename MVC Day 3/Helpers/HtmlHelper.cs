@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text;
 
-namespace MVC_Day_3.Models
+namespace MVC_Day_3.Helpers
 {
     public static class HtmlHelper
     {

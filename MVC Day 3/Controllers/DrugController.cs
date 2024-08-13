@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MVC_Day_3.Data;
 using MVC_Day_3.Models;
 
 namespace MVC_Day_3.Controllers
@@ -6,38 +8,37 @@ namespace MVC_Day_3.Controllers
     public class DrugController : Controller
     {
 
-        public static List<Drug> Drugs = new List<Drug>()
-        {
-            new Drug { ID = 1, Name = "Comtrix" , Price = 45.50m , ImagePath ="~/images/img1.jpg"  },
-            new Drug { ID = 2, Name = "Panadol" , Price = 95.70m ,ImagePath = "~/images/img2.jpeg" }
-        };
 
+
+        ApplicationDBContext _context;
+
+        public DrugController(ApplicationDBContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
+            var Drugs = _context.Drugs.ToList();
             return View(Drugs);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
         [HttpPost]
         public IActionResult Create(Drug drug)
         {
-
             if (ModelState.IsValid)
             {
-                if (Drugs.Any(s => s.ID == drug.ID))
-                {
-                    ModelState.AddModelError("ID", "A drug with this ID already exists.");
-                    return View(drug);
-                }
-                Drugs.Add(drug);
+                _context.Drugs.Add(drug);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
             return View(drug);
         }
 
@@ -48,8 +49,13 @@ namespace MVC_Day_3.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var drug = Drugs.FirstOrDefault(s => s.ID == id);
 
+            var drug = _context.Drugs.Find(id);
+            if (drug == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
             return View(drug);
         }
 
@@ -58,14 +64,23 @@ namespace MVC_Day_3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingDrug = Drugs.FirstOrDefault(s => s.ID == drug.ID);
-
-                existingDrug.Name = drug.Name;
-                existingDrug.Price = drug.Price;
-                existingDrug.ImagePath = drug.ImagePath;
-
+                _context.Drugs.Update(drug);
+                _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            if (!ModelState.IsValid)
+            {
+
+                foreach (var modelState in ModelState)
+                {
+                    foreach (var error in modelState.Value.Errors)
+                    {
+                        Console.WriteLine($"Key: {modelState.Key}, Error: {error.ErrorMessage}");
+                    }
+                }
+            }
+            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
 
             return View(drug);
         }
@@ -74,7 +89,12 @@ namespace MVC_Day_3.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            var drug = Drugs.FirstOrDefault(s => s.ID == id);
+            if (id == null && id == 0)
+            {
+                NotFound();
+            }
+
+            var drug = _context.Drugs.Find(id);
 
             return View(drug);
         }
@@ -82,9 +102,15 @@ namespace MVC_Day_3.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var drug = Drugs.FirstOrDefault(s => s.ID == id);
+            var drug = _context.Drugs.Find(id);
 
-            Drugs.Remove(drug);
+            if (drug == null)
+            {
+                NotFound();
+            }
+
+            _context.Drugs.Remove(drug);
+            _context.SaveChanges();
 
 
             return RedirectToAction("Index");

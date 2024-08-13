@@ -6,7 +6,7 @@
 
 
 <div>
-    <a class="btn btn-primary" href="@Url.Action("Create")">Add Drug</a>
+    <a class="btn btn-primary" asp-action="Create">Add Drug</a>
 </div>
 <br />
 <div class="container mt-5">
@@ -16,8 +16,10 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Price</th>
+                <th scope="col">ManufactureDate</th>
+                <th scope="col">ExpirationDate</th>
                 <th scope="col">ImagePath</th>
+                <th scope="col">CompanyId</th>
                 <th scope="col">Actions</th>
                 
             </tr>
@@ -26,13 +28,15 @@
             @foreach (var drug in Model)
             {
                 <tr>
-                    <th scope="row">@drug.ID</th>
+                    <th scope="row">@drug.Id</th>
                     <td>@drug.Name</td>
-                    <td>@drug.Price</td>
+                    <td>@drug.ManufactureDate.ToShortDateString()</td>
+                    <td>@drug.ExpirationDate.ToShortDateString()</td>
                     <td><img src="@Url.Content(@drug.ImagePath)" alt="@drug.Name" width="200" /></td>
+                    <td>@drug.Company.Name</td>
                     <td>
-                        <a class="btn btn-outline-primary" href=@Url.Action("Edit" , new {id = drug.ID})>Edit</a>
-                        <a class="btn btn-danger" href=@Url.Action("Delete" , new {id = drug.ID})>Delete</a>
+                        <a asp-action="Edit" asp-route-id="@drug.Id">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@drug.Id">Delete</a>
                     </td>
                 </tr>
             }
