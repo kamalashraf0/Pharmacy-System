@@ -14,7 +14,7 @@
             string wwwRootPath = _hostEnvironment.WebRootPath;
             string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
             string extension = Path.GetExtension(imageFile.FileName);
-            string newFileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+            string newFileName = fileName + extension;
             string path = Path.Combine(wwwRootPath, "images", newFileName);
 
             using (var fileStream = new FileStream(path, FileMode.Create))

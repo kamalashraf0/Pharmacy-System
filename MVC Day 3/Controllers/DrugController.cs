@@ -34,16 +34,24 @@ namespace MVC_Day_3.Controllers
         [HttpPost]
         public IActionResult Create(Drug drug, IFormFile ImagePath)
         {
+            if (drug.CompanyId == 0)
+            {
+                ModelState.AddModelError("CompanyId", "Please select a valid company.");
+            }
+
             if (ModelState.IsValid)
             {
                 if (ImagePath != null)
                 {
                     drug.ImagePath = _imageHelper.SaveImage(ImagePath);
                 }
+
+
                 _context.Drugs.Add(drug);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
             return View(drug);
         }
@@ -66,12 +74,19 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Drug drug, IFormFile ImagePath)
+        public IActionResult Edit(Drug drug, IFormFile? ImagePath)
         {
             if (ModelState.IsValid)
             {
                 var existingDrug = _context.Drugs.AsNoTracking().FirstOrDefault(d => d.Id == drug.Id);
-                drug.ImagePath = _imageHelper.UpdateImage(ImagePath, existingDrug.ImagePath);
+                if (ImagePath != null)
+                {
+                    drug.ImagePath = _imageHelper.UpdateImage(ImagePath, existingDrug.ImagePath);
+                }
+                else
+                {
+                    drug.ImagePath = existingDrug.ImagePath;
+                }
                 _context.Drugs.Update(drug);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -126,6 +141,13 @@ namespace MVC_Day_3.Controllers
         }
 
 
+        public IActionResult UniqueName(string name)
+        {
+            var drug = _context.Drugs.FirstOrDefault(x => x.Name == name);
+            if (drug == null)
+                return Json(true);
+            return Json(false);
+        }
 
     }
 }
