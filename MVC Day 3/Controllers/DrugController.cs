@@ -92,17 +92,6 @@ namespace MVC_Day_3.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (!ModelState.IsValid)
-            {
-
-                foreach (var modelState in ModelState)
-                {
-                    foreach (var error in modelState.Value.Errors)
-                    {
-                        Console.WriteLine($"Key: {modelState.Key}, Error: {error.ErrorMessage}");
-                    }
-                }
-            }
             ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
 
             return View(drug);
@@ -141,13 +130,35 @@ namespace MVC_Day_3.Controllers
         }
 
 
-        public IActionResult UniqueName(string name)
+        public IActionResult UniqueName(string name, int id)
         {
-            var drug = _context.Drugs.FirstOrDefault(x => x.Name == name);
+            var drug = _context.Drugs.FirstOrDefault(x => x.Name == name && x.Id != id);
+
             if (drug == null)
+            {
                 return Json(true);
+            }
             return Json(false);
         }
+
+        public IActionResult PastManufacture(string manufactureDate)
+        {
+            if (DateTime.TryParse(manufactureDate, out DateTime date) && date < DateTime.Now)
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+
+        public IActionResult FutureExpiration(string expirationDate)
+        {
+            if (DateTime.TryParse(expirationDate, out DateTime date) && date >= DateTime.Now)
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+
 
     }
 }

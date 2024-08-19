@@ -11,13 +11,10 @@ namespace MVC_Day_3.Controllers
             new Login() { Username="ahmed", Password = "123"}
         };
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }

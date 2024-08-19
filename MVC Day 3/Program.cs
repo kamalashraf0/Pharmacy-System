@@ -35,6 +35,7 @@ namespace MVC_Day_3
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
