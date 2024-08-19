@@ -1,4 +1,4 @@
-﻿namespace MVC_Day_3.Helpers
+﻿namespace MVC_Day_3.Repository.Helpers
 {
     public class ImageHelper
     {

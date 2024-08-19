@@ -1,6 +1,6 @@
 ﻿using MVC_Day_3.Models;
 
-namespace MVC_Day_3.Repository
+namespace MVC_Day_3.Repository.IRepository
 {
     public interface ICompaniesRepository
     {

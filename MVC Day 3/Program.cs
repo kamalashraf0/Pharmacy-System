@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
-using MVC_Day_3.Helpers;
 using MVC_Day_3.Repository;
+using MVC_Day_3.Repository.Helpers;
+using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3
 {

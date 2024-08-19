@@ -1,5 +1,6 @@
 ﻿using MVC_Day_3.Data;
 using MVC_Day_3.Models;
+using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3.Repository
 {

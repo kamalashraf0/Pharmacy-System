@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Models;
-using MVC_Day_3.Repository;
+using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3.Controllers
 {
