@@ -1,35 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVC_Day_3.Data;
 using MVC_Day_3.Models;
+using MVC_Day_3.Repository;
 
 namespace MVC_Day_3.Controllers
 {
     public class CompaniesController : Controller
     {
-        private readonly ApplicationDBContext _context;
 
-        public CompaniesController(ApplicationDBContext context)
+
+        private readonly ICompaniesRepository _companiesRepository;
+        public CompaniesController(ICompaniesRepository companiesRepository) //Inject
         {
-            _context = context;
+            _companiesRepository = companiesRepository;
         }
 
-        // GET: Companies
-        public async Task<IActionResult> Index()
+
+        public IActionResult Index()
         {
-            return View(await _context.Companies.ToListAsync());
+            return View(_companiesRepository.GetAll());
         }
 
-        // GET: Companies/Details/5
-        public async Task<IActionResult> Details(int? id)
+
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = _companiesRepository.GetbyId(id);
             if (company == null)
             {
                 return NotFound();
@@ -38,37 +38,35 @@ namespace MVC_Day_3.Controllers
             return View(company);
         }
 
-        // GET: Companies/Create
+
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Company company)
+        public IActionResult Create([Bind("Id,Name")] Company company)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
+                _companiesRepository.Add(company);
+                _companiesRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(company);
         }
 
         // GET: Companies/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Companies.FindAsync(id);
+            var company = _companiesRepository.GetbyId(id);
             if (company == null)
             {
                 return NotFound();
@@ -76,12 +74,10 @@ namespace MVC_Day_3.Controllers
             return View(company);
         }
 
-        // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Company company)
+        public IActionResult Edit(int id, [Bind("Id,Name")] Company company)
         {
             if (id != company.Id)
             {
@@ -92,8 +88,8 @@ namespace MVC_Day_3.Controllers
             {
                 try
                 {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
+                    _companiesRepository.Update(company);
+                    _companiesRepository.Save();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -111,16 +107,15 @@ namespace MVC_Day_3.Controllers
             return View(company);
         }
 
-        // GET: Companies/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = _companiesRepository.GetbyId(id);
             if (company == null)
             {
                 return NotFound();
@@ -129,30 +124,29 @@ namespace MVC_Day_3.Controllers
             return View(company);
         }
 
-        // POST: Companies/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int? id)
         {
-            var company = await _context.Companies.FindAsync(id);
+            var company = _companiesRepository.GetbyId(id);
             if (company != null)
             {
-                _context.Companies.Remove(company);
+                _companiesRepository.Delete(id);
             }
 
-            await _context.SaveChangesAsync();
+            _companiesRepository.Save();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CompanyExists(int id)
         {
-            return _context.Companies.Any(e => e.Id == id);
+            return _companiesRepository.Any(id);
         }
 
         public IActionResult UniqueName(string name, int id)
         {
-            var company = _context.Companies
-                .FirstOrDefault(x => x.Name == name && x.Id != id);
+            var company = _companiesRepository.First(name, id);
 
             if (company == null)
             {

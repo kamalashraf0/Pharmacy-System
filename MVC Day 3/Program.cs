@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
 using MVC_Day_3.Helpers;
+using MVC_Day_3.Repository;
 
 namespace MVC_Day_3
 {
@@ -13,6 +14,7 @@ namespace MVC_Day_3
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ImageHelper>();
+            builder.Services.AddScoped<ICompaniesRepository, CompaniesRepository>();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseLazyLoadingProxies().UseSqlServer(
                builder.Configuration.GetConnectionString("DefaultConnection")

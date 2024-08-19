@@ -4,12 +4,13 @@
     ViewBag.Title = "Drugs List";
 }
 
-<div>
-    <a class="btn btn-primary" asp-action="Create">Add Drug</a>
-</div>
-<br />
+
 <div class="container mt-5">
     <h2 class="mb-4">@ViewBag.Title</h2>
+    <div>
+        <a class="btn btn-primary" asp-action="Create">Add Drug</a>
+    </div>
+    <br />
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>

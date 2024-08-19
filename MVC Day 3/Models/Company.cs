@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVC_Day_3.Models
@@ -11,6 +12,7 @@ namespace MVC_Day_3.Models
         [MaxLength(50, ErrorMessage = "Should be less than 50 characters.")]
         [MinLength(3, ErrorMessage = "Should be more than 2 characters.")]
         [Remote("UniqueName", "Companies", AdditionalFields = nameof(Id), ErrorMessage = "Name must be unique.")]
+        [DisplayName("Company Name")]
         public string Name { get; set; }
 
 

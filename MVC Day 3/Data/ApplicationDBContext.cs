@@ -6,6 +6,7 @@ namespace MVC_Day_3.Data
     public class ApplicationDBContext : DbContext
     {
 
+
         public ApplicationDBContext(DbContextOptions options) : base(options)
         {
 
