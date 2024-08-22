@@ -1,6 +1,8 @@
-﻿@model Login
+﻿@model User
 @{
     ViewBag.Title = "Login";
+
+    Layout = "_LoginLayout";
 }
 
 <div class="container mt-5">
@@ -11,25 +13,29 @@
                     <h3>Sign In</h3>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Login" method="post">
-                        <!-- Email input -->
+                    <form  method="post">
+                      
                         <div class="form-outline mb-4">
-                            <input asp-for="Username" id="username" class="form-control" />
-                            <label class="form-label" asp-for="Username">Username</label>
+                            <input asp-for="Username" id="username" class="form-control" required />
+                            <label class="form-label" asp-for="Username">Username </label>
                             <span asp-validation-for="Username" class="text-danger"></span>
                         </div>
 
-                        <!-- Password input -->
+                        
                         <div class="form-outline mb-4">
-                            <input asp-for="Password" id="password" type="password" class="form-control" />
+                            <input asp-for="Password" id="password" type="password" class="form-control" required />
                             <label class="form-label" asp-for="Password">Password</label>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
-                        <!-- 2 column grid layout for inline styling -->
+                        @if (ViewBag.Error != null)
+                        {
+                            <p class="text-danger">@ViewBag.Error</p>
+                        }
+                        
                         <div class="row mb-4">
                             <div class="col d-flex justify-content-center">
-                                <!-- Checkbox -->
+                               
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
                                     <label class="form-check-label" for="form2Example31"> Remember me </label>
@@ -67,6 +73,8 @@
                             </div>
 
                         </div>
+                        
+
                     </form>
                 </div>
             </div>

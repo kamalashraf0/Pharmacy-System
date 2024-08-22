@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVC_Day_3.Models;
+using MVC_Day_3.Data;
+using MVC_Day_3.Repository.Helpers;
 
 namespace MVC_Day_3.Controllers
 {
     public class LoginController : Controller
     {
-        private static List<Login> log = new List<Login>()
+        private readonly ApplicationDBContext _dbContext;
+
+        public LoginController(ApplicationDBContext dBContext)
         {
-            new Login() { Username="Kamal", Password = "kam123#"},
-            new Login() { Username="ahmed", Password = "123"}
-        };
-
-
+            _dbContext = dBContext;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -20,24 +20,30 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(Login loginModel)
+        public IActionResult Index(string username, string password)
         {
-            if (ModelState.IsValid)
+            string hashedPassword = PasswordHelper.HashPassword(password);
+            var user = _dbContext.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+            if (user != null)
             {
-                var user = log.FirstOrDefault(x => x.Username.Trim() == loginModel.Username.Trim() && x.Password == loginModel.Password);
-                if (user != null)
-                {
-                    // Redirect to a valid action, assuming Home action exists in HomeController
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ViewBag.logerror = "error";
-                    ModelState.AddModelError("Password", "Invalid login attempt.");
-                    return View(loginModel);
-                }
+                HttpContext.Session.SetString("UserId", user.Id.ToString());
+                TempData["Username"] = user.Username;
+
+
+                Response.Cookies.Append("UserEmail", user.Email);
+
+                return RedirectToAction("Index", "Home");
             }
-            return View(loginModel);
+            ViewBag.Error = "Invalid username or password";
+            return View();
+        }
+
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete("UserEmail");
+            return RedirectToAction("Index");
         }
     }
 }

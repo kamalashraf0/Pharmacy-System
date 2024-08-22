@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
 using MVC_Day_3.Repository;
@@ -21,6 +22,20 @@ namespace MVC_Day_3
                builder.Configuration.GetConnectionString("DefaultConnection")
                ));
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Login/Index";
+                options.LogoutPath = "/Login/Logout";
+            });
+
 
 
             var app = builder.Build();
@@ -37,7 +52,7 @@ namespace MVC_Day_3
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
 

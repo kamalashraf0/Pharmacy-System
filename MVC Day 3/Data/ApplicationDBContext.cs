@@ -16,5 +16,7 @@ namespace MVC_Day_3.Data
 
         public DbSet<Drug> Drugs { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<User> Users { get; set; }
+
     }
 }
