@@ -1,10 +1,9 @@
-﻿@* @model User
+﻿@model LoginUserViewModel
 @{
     ViewBag.Title = "Login";
 
     Layout = "_LoginLayout";
 }
-
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -13,32 +12,26 @@
                     <h3>Sign In</h3>
                 </div>
                 <div class="card-body">
-                    <form  method="post">
-                      
+                    <form asp-action="Login">
+                        <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="form-outline mb-4">
-                            <input asp-for="Username" id="username" class="form-control" required />
-                            <label class="form-label" asp-for="Username">Username </label>
-                            <span asp-validation-for="Username" class="text-danger"></span>
+                            <input asp-for="Name" id="username" class="form-control" required />
+                            <label class="form-label" asp-for="Name">Username </label>
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
-                        
+
                         <div class="form-outline mb-4">
                             <input asp-for="Password" id="password" type="password" class="form-control" required />
                             <label class="form-label" asp-for="Password">Password</label>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
-
-                        @if (ViewBag.Error != null)
-                        {
-                            <p class="text-danger">@ViewBag.Error</p>
-                        }
-                        
                         <div class="row mb-4">
                             <div class="col d-flex justify-content-center">
-                               
+
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-                                    <label class="form-check-label" for="form2Example31"> Remember me </label>
+                                    <input asp-for="RememberMe" class="form-check-input" type="checkbox" value="" />
+                                    <label class="form-check-label" asp-for="RememberMe"> Remember me </label>
                                 </div>
                             </div>
 
@@ -52,10 +45,11 @@
                         <div class="d-flex justify-content-center mb-4">
                             <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
                         </div>
+                   
 
                         <!-- Register buttons -->
                         <div class="text-center">
-                            <p>Not a member? <a  asp-action="Register" asp-controller="Account">Register</a></p>
+                            <p>Not a member? <a asp-action="Register" asp-controller="Account">Register</a></p>
                             <p>or sign up with:</p>
                             <div class="d-flex justify-content-center mb-4">
                                 <button type="button" class="btn btn-link mx-4">
@@ -73,7 +67,7 @@
                             </div>
 
                         </div>
-                        
+
 
                     </form>
                 </div>
@@ -81,4 +75,3 @@
         </div>
     </div>
 </div>
- *@

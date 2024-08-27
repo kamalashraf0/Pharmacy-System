@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVC_Day_3.Models;
 using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3.Controllers
@@ -15,7 +15,7 @@ namespace MVC_Day_3.Controllers
             _companiesRepository = companiesRepository;
         }
 
-
+        [Authorize]
         public IActionResult Index()
         {
             return View(_companiesRepository.GetAll());

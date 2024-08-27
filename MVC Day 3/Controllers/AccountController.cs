@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MVC_Day_3.Controllers
 {
@@ -33,7 +34,7 @@ namespace MVC_Day_3.Controllers
                 appuser.PasswordHash = UserViewModel.Password;
 
                 //saveDatabase
-                IdentityResult result = await _userManager.CreateAsync(appuser);
+                IdentityResult result = await _userManager.CreateAsync(appuser, UserViewModel.Password);
 
                 if (result.Succeeded)
                 {
@@ -51,5 +52,47 @@ namespace MVC_Day_3.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Login()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginUserViewModel loginUserViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser appuser = await _userManager.FindByNameAsync(loginUserViewModel.Name);
+
+                if (appuser != null)
+                {
+                    bool found = await _userManager.CheckPasswordAsync(appuser, loginUserViewModel.Password);
+
+                    if (found)
+                    {
+                        List<Claim> claims = new List<Claim>();
+                        claims.Add(new Claim("UserAddress", appuser.Address));
+                        _signInManager.SignInWithClaimsAsync(appuser, loginUserViewModel.RememberMe, claims);
+
+                        //await _signInManager.SignInAsync(appuser, loginUserViewModel.RememberMe);
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                }
+            }
+            ModelState.AddModelError("", "Username or Password is Wrong");
+
+
+            return View(loginUserViewModel);
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return View("Login");
+        }
     }
 }

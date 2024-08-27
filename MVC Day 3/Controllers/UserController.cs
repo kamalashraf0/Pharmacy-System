@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC_Day_3.Data;
-using MVC_Day_3.Models;
-using MVC_Day_3.Repository.Helpers;
 
 
 namespace MVC_Day_3.Controllers

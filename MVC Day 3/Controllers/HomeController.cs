@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using MVC_Day_3.Models;
 using System.Diagnostics;
 
 namespace MVC_Day_3.Controllers
@@ -15,13 +14,7 @@ namespace MVC_Day_3.Controllers
 
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("UserId") == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
 
-            ViewBag.Username = TempData["Username"];
-            TempData.Keep("Username");
 
             return View();
         }
