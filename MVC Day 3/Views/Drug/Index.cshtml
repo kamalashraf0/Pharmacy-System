@@ -11,6 +11,9 @@
         <a class="btn btn-primary" asp-action="Create">Add Drug</a>
     </div>
     <br />
+  
+
+   
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
@@ -36,15 +39,37 @@
                     </td>
                     <td>@drug.Company.Name</td>
                     <td>
-                        <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@drug.Id">Edit</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="DrugDetails" asp-route-id="@drug.Id"
+                           onclick="GetEmpData(@drug.Id)">Details</a>
+                        <a class="btn btn-sm btn-success" asp-action="Edit" asp-route-id="@drug.Id" >Edit</a>
                         <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@drug.Id">Delete</a>
+
                     </td>
+
                 </tr>
             }
         </tbody>
+            <div id="div1" ">
+            </div>
     </table>
 </div>
+<script src="~/lib/jquery/dist/jquery.js"></script>
 
+<script>
+    function GetEmpData(EmpID) {
+        
+        event.preventDefault();
+
+        // AJAX call to get drug details using jquery
+        $.ajax({
+            url: "@Url.Action("DrugDetails")/" + EmpID,
+            success: function (result) {
+                $("#div1").html(result);
+            }
+        });
+    }
+
+</script>
 
 
 @* @model List<Drug>

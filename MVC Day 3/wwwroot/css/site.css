@@ -1,22 +1,52 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+html,
+body {
+    height: 100%;
+    background-color: #f8f9fa;
+    color: #333;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
 }
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.navbar {
+    background-color: #0B1833;
+}
+
+.navbar-brand,
+.nav-link {
+    color: #ffffff !important;
+}
+
+    .navbar-brand:hover,
+    .nav-link:hover {
+        color: #f0ad4e !important;
+    }
+
+.footer {
+    background-color: #0B1833;
+    color: #ffffff;
+    padding: 15px 0;
+}
+
+    .footer a {
+        color: #f0ad4e;
+        text-decoration: none;
+    }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }

@@ -23,6 +23,7 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel UserViewModel)
         {
             if (ModelState.IsValid)
@@ -31,13 +32,15 @@ namespace MVC_Day_3.Controllers
                 ApplicationUser appuser = new ApplicationUser();
                 appuser.Address = UserViewModel.Address;
                 appuser.UserName = UserViewModel.Username;
-                appuser.PasswordHash = UserViewModel.Password;
+                //appuser.PasswordHash = UserViewModel.Password;
 
                 //saveDatabase
-                IdentityResult result = await _userManager.CreateAsync(appuser, UserViewModel.Password);
+                IdentityResult result = await _userManager.CreateAsync(appuser, UserViewModel.Password);  // hashPassword
 
                 if (result.Succeeded)
                 {
+                    //assign to role
+                    await _userManager.AddToRoleAsync(appuser, "Admin");  //addtorole
                     //cookie
                     await _signInManager.SignInAsync(appuser, false);
                     return RedirectToAction("Index", "Home");
@@ -60,6 +63,7 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginUserViewModel loginUserViewModel)
         {
             if (ModelState.IsValid)
@@ -74,7 +78,7 @@ namespace MVC_Day_3.Controllers
                     {
                         List<Claim> claims = new List<Claim>();
                         claims.Add(new Claim("UserAddress", appuser.Address));
-                        _signInManager.SignInWithClaimsAsync(appuser, loginUserViewModel.RememberMe, claims);
+                        await _signInManager.SignInWithClaimsAsync(appuser, loginUserViewModel.RememberMe, claims);
 
                         //await _signInManager.SignInAsync(appuser, loginUserViewModel.RememberMe);
                         return RedirectToAction("Index", "Home");
@@ -92,7 +96,7 @@ namespace MVC_Day_3.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return View("Login");
+            return RedirectToAction("Login");
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
 using MVC_Day_3.Repository;
-using MVC_Day_3.Repository.Helpers;
 using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3
@@ -18,7 +17,14 @@ namespace MVC_Day_3
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ImageHelper>();
             builder.Services.AddScoped<ICompaniesRepository, CompaniesRepository>();
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                options =>
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 4;
+                }).AddEntityFrameworkStores<ApplicationDBContext>();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseLazyLoadingProxies().UseSqlServer(
                builder.Configuration.GetConnectionString("DefaultConnection")

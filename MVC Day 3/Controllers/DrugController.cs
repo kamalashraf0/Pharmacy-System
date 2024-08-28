@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Day_3.Data;
-using MVC_Day_3.Models;
-using MVC_Day_3.Repository.Helpers;
 
 namespace MVC_Day_3.Controllers
 {
@@ -23,6 +21,18 @@ namespace MVC_Day_3.Controllers
             var Drugs = _context.Drugs.ToList();
             return View(Drugs);
         }
+
+        public IActionResult DrugDetails(int id)
+        {
+            var drug = _context.Drugs.Find(id);
+            var company = _context.Companies.Find(drug.CompanyId);
+            ViewBag.compName = company.Name;
+            return PartialView(drug);
+        }
+
+
+
+
 
         [HttpGet]
         public IActionResult Create()
@@ -74,6 +84,7 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(Drug drug, IFormFile? ImagePath)
         {
             if (ModelState.IsValid)
@@ -112,6 +123,7 @@ namespace MVC_Day_3.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             var drug = _context.Drugs.Find(id);

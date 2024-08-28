@@ -4,10 +4,8 @@
 
 <h2>Welcome @ViewBag.Username!</h2>
 
-<p>
-    <a class="btn btn-primary" asp-action="Register" asp-controller="Account">Register</a> |
-    <a class="btn btn-outline-danger" asp-action="Logout" asp-controller="Account">Logout</a>
-</p>
+
+<div id="div0"><a class="btn btn-outline-info" onclick="GetDetails()">Click Me</a></div>
 
 <div class="jumbotron text-center bg-primary text-white">
     <h1 class="display-4">Welcome to Pharmacico</h1>
@@ -59,3 +57,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    function GetDetails()
+    {
+        $.ajax({
+            url: "@Url.Action("ShowDetails")",
+            success: function (result) {
+                $("#div0").html(result);
+            }
+        });
+    }
+</script>
