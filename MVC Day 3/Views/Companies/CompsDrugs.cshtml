@@ -5,35 +5,67 @@
 
 <h1>CompsDrugs</h1>
 
-<select id="compId" name="compId" class="form form-control" onchange="GetDrugs()">
-    @foreach (var item in Model)
-    {
-        <option value = "@item.Id"> @item.Name</option>
-    }
-</select>
-<br />
-<br />
-<select id="Drugs" name="Drugs" class="form form-control">
-</select>
+<div class="form-group">
+    <label for="compId">Select a Company:</label>
+    <select id="compId" name="compId" class="form-control" onchange="GetDrugs()">
+        <option value="">-- Select a Company --</option>
+        @foreach (var item in Model)
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<div class="form-group" id="drugsContainer" style="display: none;">
+    <label for="Drugs">Select a Drug:</label>
+    <select id="Drugs" name="Drugs" class="form-control">
+        <option value="">-- Select a Drug --</option>
+    </select>
+</div>
+
+<div id="loadingSpinner" style="display: none;">
+    <img src="~/images/spinner.gif" alt="Loading..." />
+</div>
+
+<div id="errorMessage" class="alert alert-danger" style="display: none;">
+    Something went wrong while loading the drugs. Please try again later.
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <script>
     function GetDrugs() {
         var compid = document.getElementById("compId").value;
         var drugSelect = document.getElementById("Drugs");
+        var loadingSpinner = document.getElementById("loadingSpinner");
+        var drugsContainer = document.getElementById("drugsContainer");
+        var errorMessage = document.getElementById("errorMessage");
 
-        $.ajax({
-            url: "/Companies/Drugslist?compID=" + compid,
-            success: function (result) {
-                
-                drugSelect.innerHTML = "";
+        // Clear any previous drugs
+        drugSelect.innerHTML = "<option value=''>-- Select a Drug --</option>";
+        errorMessage.style.display = "none"; // Hide any previous errors
 
-               
-                result.forEach(function (drug) {
-                    drugSelect.innerHTML += "<option value='" + drug.id + "'>" + drug.name + "</option>";
-                });
-            }
-        });
+        if (compid) {
+            loadingSpinner.style.display = "block"; // Show loading spinner
+            drugsContainer.style.display = "none"; // Hide drug select while loading
+
+            $.ajax({
+                url: "/Companies/Drugslist?compID=" + compid,
+                success: function (result) {
+                    loadingSpinner.style.display = "none"; // Hide loading spinner
+                    drugsContainer.style.display = "block"; // Show drug select
+
+                    result.forEach(function (drug) {
+                        drugSelect.innerHTML += "<option value='" + drug.id + "'>" + drug.name + "</option>";
+                    });
+                },
+                error: function () {
+                    loadingSpinner.style.display = "none"; // Hide loading spinner
+                    errorMessage.style.display = "block"; // Show error message
+                }
+            });
+        } else {
+            drugsContainer.style.display = "none"; // Hide drug select if no company is selected
+        }
     }
 </script>
