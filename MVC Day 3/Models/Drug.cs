@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MVC_Day_3.Models
 {
@@ -30,6 +31,7 @@ namespace MVC_Day_3.Models
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid company.")]
         public int CompanyId { get; set; }
 
+        [JsonIgnore]
         public virtual Company? Company { get; set; }
 
 

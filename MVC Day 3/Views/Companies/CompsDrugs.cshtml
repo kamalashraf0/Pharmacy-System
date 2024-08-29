@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Company>
+@{
+    ViewData["Title"] = "CompsDrugs";
+}
+
+<h1>CompsDrugs</h1>
+
+<select id="compId" name="compId" class="form form-control" onchange="GetDrugs()">
+    @foreach (var item in Model)
+    {
+        <option value = "@item.Id"> @item.Name</option>
+    }
+</select>
+<br />
+<br />
+<select id="Drugs" name="Drugs" class="form form-control">
+</select>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    function GetDrugs() {
+        var compid = document.getElementById("compId").value;
+        var drugSelect = document.getElementById("Drugs");
+
+        $.ajax({
+            url: "/Companies/Drugslist?compID=" + compid,
+            success: function (result) {
+                
+                drugSelect.innerHTML = "";
+
+               
+                result.forEach(function (drug) {
+                    drugSelect.innerHTML += "<option value='" + drug.id + "'>" + drug.name + "</option>";
+                });
+            }
+        });
+    }
+</script>

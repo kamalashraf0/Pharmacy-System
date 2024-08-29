@@ -10,9 +10,12 @@ namespace MVC_Day_3.Controllers
 
 
         private readonly ICompaniesRepository _companiesRepository;
-        public CompaniesController(ICompaniesRepository companiesRepository) //Inject
+        private readonly IDrugRepository _drugRepository;
+
+        public CompaniesController(ICompaniesRepository companiesRepository, IDrugRepository drugRepository) //Inject
         {
             _companiesRepository = companiesRepository;
+            _drugRepository = drugRepository;
         }
 
         [Authorize]
@@ -20,6 +23,19 @@ namespace MVC_Day_3.Controllers
         {
             return View(_companiesRepository.GetAll());
         }
+
+        public IActionResult CompsDrugs()
+        {
+
+            return View(_companiesRepository.GetAll());
+        }
+
+        public IActionResult Drugslist(int compID)
+        {
+            List<Drug> druglist = _drugRepository.GetByCompID(compID);
+            return Json(druglist);
+        }
+
 
 
         public IActionResult Details(int? id)

@@ -17,6 +17,7 @@ namespace MVC_Day_3
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ImageHelper>();
             builder.Services.AddScoped<ICompaniesRepository, CompaniesRepository>();
+            builder.Services.AddScoped<IDrugRepository, DrugRepository>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
                 options =>
                 {
@@ -63,6 +64,12 @@ namespace MVC_Day_3
             app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            //Naming Convention
+            //Constraint int
+            //optional cons
+            app.MapControllerRoute("MyRoute", "aDrugo/{id:int}/{color?}",
+                new { controller = "Drug", action = "Create" });
 
             app.MapControllerRoute(
                 name: "default",

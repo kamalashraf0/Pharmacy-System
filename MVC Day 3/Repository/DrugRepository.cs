@@ -1,9 +1,10 @@
-﻿using MVC_Day_3.Data;
-using MVC_Day_3.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MVC_Day_3.Data;
+using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3.Repository
 {
-    public class DrugRepository
+    public class DrugRepository : IDrugRepository
     {
         ApplicationDBContext _context;
 
@@ -21,7 +22,7 @@ namespace MVC_Day_3.Repository
             _context.Update(obj);
         }
 
-        public void Delete(int? id)
+        public void Delete(int id)
         {
             var drug = GetbyId(id);
             _context.Remove(drug);
@@ -33,14 +34,31 @@ namespace MVC_Day_3.Repository
             return _context.Drugs.ToList();
         }
 
-        public Drug GetbyId(int? id)
+        public Drug GetbyId(int id)
         {
             return _context.Drugs.FirstOrDefault(d => d.Id == id);
+        }
+
+        public Drug GetByIdAsNoTracking(int id)
+        {
+            return _context.Drugs.AsNoTracking().FirstOrDefault(d => d.Id == id);
         }
 
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+
+        public Drug UniqueName(string name, int id)
+        {
+            return _context.Drugs.FirstOrDefault(x => x.Name == name && x.Id != id);
+        }
+
+
+        public List<Drug> GetByCompID(int Compid)
+        {
+            return _context.Drugs.Where(e => e.CompanyId == Compid).ToList();
         }
 
     }

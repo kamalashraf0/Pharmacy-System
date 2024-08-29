@@ -1,6 +1,4 @@
-﻿using MVC_Day_3.Models;
-
-namespace MVC_Day_3.Repository.IRepository
+﻿namespace MVC_Day_3.Repository.IRepository
 {
     public interface IDrugRepository
     {
@@ -8,13 +6,18 @@ namespace MVC_Day_3.Repository.IRepository
 
         public void Update(Drug obj);
 
-        public void Delete(int? id);
+        public void Delete(int id);
 
         public List<Drug> GetAll();
 
-        public Drug GetbyId(int? id);
+        public Drug GetbyId(int id);
+        public Drug GetByIdAsNoTracking(int id);
 
         public void Save();
+
+        public Drug UniqueName(string name, int id);
+
+        public List<Drug> GetByCompID(int Compid);
 
     }
 }

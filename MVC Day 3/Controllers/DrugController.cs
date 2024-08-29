@@ -1,31 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using MVC_Day_3.Data;
+using MVC_Day_3.Repository.IRepository;
 
 namespace MVC_Day_3.Controllers
 {
     public class DrugController : Controller
     {
 
-        ApplicationDBContext _context;
-        ImageHelper _imageHelper;
+        private readonly IDrugRepository _drugRepository;
+        private readonly ICompaniesRepository _companiesRepository;
+        private readonly ImageHelper _imageHelper;
 
-        public DrugController(ApplicationDBContext context, ImageHelper imageHelper)
+        public DrugController(IDrugRepository drugRepository, ICompaniesRepository companiesRepository, ImageHelper imageHelper)
         {
-            _context = context;
+            _drugRepository = drugRepository;
             _imageHelper = imageHelper;
+            _companiesRepository = companiesRepository;
         }
+
+        [Authorize]
         public IActionResult Index()
         {
-            var Drugs = _context.Drugs.ToList();
+            var Drugs = _drugRepository.GetAll(); ;
             return View(Drugs);
         }
 
         public IActionResult DrugDetails(int id)
         {
-            var drug = _context.Drugs.Find(id);
-            var company = _context.Companies.Find(drug.CompanyId);
+            var drug = _drugRepository.GetbyId(id);
+            var company = _companiesRepository.GetbyId(drug.CompanyId);
             ViewBag.compName = company.Name;
             return PartialView(drug);
         }
@@ -37,7 +41,7 @@ namespace MVC_Day_3.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
+            ViewBag.Comps = new SelectList(_companiesRepository.GetAll(), "Id", "Name");
             return View();
         }
 
@@ -57,12 +61,12 @@ namespace MVC_Day_3.Controllers
                 }
 
 
-                _context.Drugs.Add(drug);
-                _context.SaveChanges();
+                _drugRepository.Add(drug);
+                _drugRepository.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
+            ViewBag.Comps = new SelectList(_companiesRepository.GetAll(), "Id", "Name");
             return View(drug);
         }
 
@@ -74,12 +78,12 @@ namespace MVC_Day_3.Controllers
         public IActionResult Edit(int id)
         {
 
-            var drug = _context.Drugs.Find(id);
+            var drug = _drugRepository.GetbyId(id);
             if (drug == null)
             {
                 return NotFound();
             }
-            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
+            ViewBag.Comps = new SelectList(_companiesRepository.GetAll(), "Id", "Name");
             return View(drug);
         }
 
@@ -89,7 +93,11 @@ namespace MVC_Day_3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingDrug = _context.Drugs.AsNoTracking().FirstOrDefault(d => d.Id == drug.Id);
+                var existingDrug = _drugRepository.GetByIdAsNoTracking(drug.Id);
+                if (existingDrug == null)
+                {
+                    NotFound();
+                }
                 if (ImagePath != null)
                 {
                     drug.ImagePath = _imageHelper.UpdateImage(ImagePath, existingDrug.ImagePath);
@@ -98,12 +106,12 @@ namespace MVC_Day_3.Controllers
                 {
                     drug.ImagePath = existingDrug.ImagePath;
                 }
-                _context.Drugs.Update(drug);
-                _context.SaveChanges();
+                _drugRepository.Update(drug);
+                _drugRepository.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Comps = new SelectList(_context.Companies, "Id", "Name");
+            ViewBag.Comps = new SelectList(_companiesRepository.GetAll(), "Id", "Name");
 
             return View(drug);
         }
@@ -112,12 +120,12 @@ namespace MVC_Day_3.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            if (id == null && id == 0)
+            if (id == 0)
             {
                 NotFound();
             }
 
-            var drug = _context.Drugs.Find(id);
+            var drug = _drugRepository.GetbyId(id);
 
             return View(drug);
         }
@@ -126,7 +134,7 @@ namespace MVC_Day_3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var drug = _context.Drugs.Find(id);
+            var drug = _drugRepository.GetbyId(id);
 
             if (drug == null)
             {
@@ -134,8 +142,8 @@ namespace MVC_Day_3.Controllers
             }
 
             _imageHelper.DeleteImage(drug.ImagePath);
-            _context.Drugs.Remove(drug);
-            _context.SaveChanges();
+            _drugRepository.Delete(id);
+            _drugRepository.Save();
 
 
             return RedirectToAction("Index");
@@ -144,7 +152,7 @@ namespace MVC_Day_3.Controllers
 
         public IActionResult UniqueName(string name, int id)
         {
-            var drug = _context.Drugs.FirstOrDefault(x => x.Name == name && x.Id != id);
+            var drug = _drugRepository.UniqueName(name, id);
 
             if (drug == null)
             {
